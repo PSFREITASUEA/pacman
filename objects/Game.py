@@ -1,5 +1,5 @@
 import pygame
-from pygame import KEYDOWN, K_LEFT, K_RIGHT, KEYUP, K_UP, K_DOWN
+from pygame import KEYDOWN, K_LEFT, K_RIGHT, K_UP, K_DOWN
 
 from objects.PacMan import PacMan
 from objects.Screen import Screen
@@ -21,23 +21,13 @@ class Game:
                     self.stop_game()
                 elif event.type == KEYDOWN:
                     if event.key == K_LEFT:
-                        self.pac_man.is_moving_left = True
+                        self.pac_man.change_direction_to("LEFT")
                     elif event.key == K_RIGHT:
-                        self.pac_man.is_moving_right = True
+                        self.pac_man.change_direction_to("RIGHT")
                     elif event.key == K_UP:
-                        self.pac_man.is_moving_up = True
+                        self.pac_man.change_direction_to("UP")
                     elif event.key == K_DOWN:
-                        self.pac_man.is_moving_down = True
-
-                elif event.type == KEYUP:
-                    if event.key == K_LEFT:
-                        self.pac_man.is_moving_left = False
-                    elif event.key == K_RIGHT:
-                        self.pac_man.is_moving_right = False
-                    elif event.key == K_UP:
-                        self.pac_man.is_moving_up = False
-                    elif event.key == K_DOWN:
-                        self.pac_man.is_moving_down = False
+                        self.pac_man.change_direction_to("DOWN")
 
             self.pac_man.update()
             self.screen.draw(self.pac_man.get_current_sprite(), self.pac_man.get_current_position())
