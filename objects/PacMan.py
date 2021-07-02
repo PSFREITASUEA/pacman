@@ -16,7 +16,6 @@ class PacMan:
         self.is_moving_right = False
         self.is_moving_up = False
         self.is_moving_down = False
-        self.current_frame = 0
         self.initialize_sprites()
         self.speed = 1
         self.position = self.sprites_right[0].get_rect()
