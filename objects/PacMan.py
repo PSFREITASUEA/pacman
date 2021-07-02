@@ -1,5 +1,4 @@
 import pygame as pygame
-from pygame.surface import Surface
 
 
 class PacMan:
@@ -26,8 +25,11 @@ class PacMan:
         elif self.is_moving_right:
             self.position.x += self.speed
 
-    def draw(self, screen: Surface):
-        screen.blit(self.sprites[int(self.current_frame)], (self.position.x, self.position.y))
+    def get_current_sprite(self):
+        return self.sprites[int(self.current_frame)]
+
+    def get_current_position(self):
+        return self.position.x, self.position.y
 
     def update(self):
         self.move()

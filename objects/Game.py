@@ -2,19 +2,19 @@ import pygame
 from pygame import KEYDOWN, K_LEFT, K_RIGHT, KEYUP, K_UP, K_DOWN
 
 from objects.PacMan import PacMan
+from objects.Screen import Screen
 
 
 class Game:
     def __init__(self, screen_width, screen_height, framerate):
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
+        self.screen = Screen(screen_width, screen_height)
         self.is_running = True
-        self.pac_man = PacMan((self.screen.get_width() / 2, self.screen.get_height() / 2), 3)
-        self.clock = pygame.time.Clock()
+        self.pac_man = PacMan((self.screen.get_screen_width() / 2, self.screen.get_screen_height() / 2), 3)
         self.framerate = framerate
 
     def start_game(self):
         while self.is_running:
-            self.clock.tick(self.framerate)
+            self.screen.clock.tick(self.framerate)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -40,9 +40,9 @@ class Game:
                         self.pac_man.is_moving_down = False
 
             self.pac_man.update()
-            self.pac_man.draw(self.screen)
+            self.screen.draw(self.pac_man.get_current_sprite(), self.pac_man.get_current_position())
             pygame.display.flip()
-            self.screen.fill((0, 0, 0))
+            self.screen.draw_background()
 
     def stop_game(self):
         self.is_running = False
