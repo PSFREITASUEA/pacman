@@ -1,9 +1,12 @@
-from objects.Wall import Wall
+from pygame.math import Vector2
+
+from objects.Cell import Cell
 
 
 class Maze:
     def __init__(self):
         self.walls = []
+        self.spawn = 0
         self.load()
 
     def load(self):
@@ -12,11 +15,22 @@ class Maze:
             for yidx, line in enumerate(file):
                 x = 0
                 for xidx, char in enumerate(line):
-                    if char != "0" and char != "\n" and char != "S":
-                        self.walls.append(Wall(position=(x, y), wall_type=f"wall_{char}"))
+                    if char != "\n" and char != "S":
+                        self.walls.append(
+                            Cell(position=Vector2(x, y), wall_type=f"wall_{char}", x_index=xidx, y_index=yidx))
+                    elif char == "0":
+                        self.walls.append(
+                            Cell(position=Vector2(x, y), wall_type=f"wall_{char}", x_index=xidx, y_index=yidx))
                     x += 32
                 y += 32
 
-    def draw(self, surface):
-        for wall in self.walls:
-            surface.blit(wall.sprite, (wall.position[0], wall.position[1]))
+    def get_spawn(self):
+        for cell in self.walls:
+            if cell.wall_type == "wall_0":
+                self.spawn = cell
+                return self.spawn
+
+    def get_cell(self, x_index, y_index):
+        for cell in self.walls:
+            if cell.x_index == x_index and cell.y_index == y_index:
+                return cell

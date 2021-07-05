@@ -11,7 +11,7 @@ class Game:
         self.screen = Screen(screen_width, screen_height)
         self.is_running = True
         self.maze = Maze()
-        self.pac_man = PacMan((self.screen.get_screen_width() / 2, self.screen.get_screen_height() / 2), 3)
+        self.pac_man = PacMan(self.maze.get_spawn())
         self.framerate = framerate
 
     def start_game(self):
@@ -33,6 +33,8 @@ class Game:
 
             self.screen.draw_background()
             self.screen.draw_maze(self.maze)
+            self.pac_man.move(self.maze.get_cell(self.pac_man.x_index, self.pac_man.y_index))
+            self.screen.draw(self.pac_man.sprite, self.pac_man.position)
             pygame.display.flip()
 
     def stop_game(self):

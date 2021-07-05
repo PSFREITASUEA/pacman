@@ -21,7 +21,6 @@ class Ghost:
         self.difficult = difficult
         self.speed = self.setup_speed_based_on_difficult()
         self.position = self.sprites_right[0].get_rect()
-        self.position.move(position)
 
     def move(self):
         if self.is_moving_up:
