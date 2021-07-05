@@ -1,5 +1,7 @@
 import pygame
 
+from objects.Maze import Maze
+
 
 class Screen:
     def __init__(self, screen_width, screen_height):
@@ -14,6 +16,10 @@ class Screen:
 
     def draw(self, sprite, position):
         self.surface.blit(sprite, (position[0], position[1]))
+
+    def draw_maze(self, maze: Maze):
+        for wall in maze.walls:
+            self.surface.blit(wall.sprite, (wall.position[0], wall.position[1]))
 
     def draw_background(self):
         self.surface.fill((0, 0, 0))
