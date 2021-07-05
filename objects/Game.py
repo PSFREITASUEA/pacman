@@ -33,7 +33,7 @@ class Game:
 
             self.screen.draw_background()
             self.screen.draw_maze(self.maze)
-            self.pac_man.move(self.maze.get_cell(self.pac_man.x_index, self.pac_man.y_index))
+            self.pac_man.update(self.maze.get_cell(int(self.pac_man.x_index), int(self.pac_man.y_index)))
             self.screen.draw(self.pac_man.sprite, self.pac_man.position)
             pygame.display.flip()
 
