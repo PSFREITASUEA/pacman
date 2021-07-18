@@ -67,6 +67,23 @@ class PacMan:
         self.move(cells)
 
     def move(self, cells):
+        if self.is_moving_right:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+                self.x_index -= 1
+                self.is_moving_right = False
+        elif self.is_moving_left:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+                self.x_index += 1
+                self.is_moving_left = False
+        elif self.is_moving_down:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+                self.y_index -= 1
+                self.is_moving_down = False
+        elif self.is_moving_up:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+                self.y_index += 1
+                self.is_moving_up = False
+
         self.current_cell = cells[int(self.y_index)][int(self.x_index)]
 
     def initialize_sprites(self):
