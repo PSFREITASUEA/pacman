@@ -36,11 +36,11 @@ class Game:
 
             self.screen.draw_background()
             self.screen.draw_maze(self.maze)
-            self.screen.draw_coins(self.maze.coins)
-            self.pac_man.update(self.maze.get_cell(int(self.pac_man.x_index), int(self.pac_man.y_index)))
-            self.maze.update(int(self.pac_man.x_index), int(self.pac_man.y_index))
-            self.screen.draw(self.pac_man.get_current_sprite(), self.pac_man.get_current_position())
-            self.screen.draw_ghosts(self.ghosts)
+            # self.screen.draw_coins(self.maze.coins)
+            # self.pac_man.update(self.maze.get_cell(int(self.pac_man.x_index), int(self.pac_man.y_index)))
+            # self.maze.update(int(self.pac_man.x_index), int(self.pac_man.y_index))
+            # self.screen.draw(self.pac_man.get_current_sprite(), self.pac_man.get_current_position())
+            # self.screen.draw_ghosts(self.ghosts)
             pygame.display.flip()
 
     def stop_game(self):
