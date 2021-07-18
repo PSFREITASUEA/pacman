@@ -2,12 +2,8 @@ import pygame.image
 
 
 class PacMan:
-    def __init__(self, spawn):
-        self.spawn = spawn
-        self.position = spawn.position
-        self.x_index = spawn.x_index
-        self.y_index = spawn.y_index
-        self.previous_cell = spawn
+    def __init__(self, spawn_cell):
+        self.current_cell = spawn_cell
         self.sprite = pygame.image.load("assets/pac_man_right_1.png")
         self.is_moving_right = False
         self.is_moving_left = False

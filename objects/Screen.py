@@ -18,8 +18,10 @@ class Screen:
         self.surface.blit(sprite, (position[0], position[1]))
 
     def draw_maze(self, maze: Maze):
-        for wall in maze.walls:
-            self.surface.blit(wall.sprite, (wall.position[0], wall.position[1]))
+        for y_index in range(0, len(maze.cells)):
+            for x_index in range(0, len(maze.cells[y_index])):
+                cell_to_be_drawn = maze.cells[y_index][x_index]
+                self.surface.blit(cell_to_be_drawn.sprite, cell_to_be_drawn.position)
 
     def draw_coins(self, coins):
         for coin in coins:
