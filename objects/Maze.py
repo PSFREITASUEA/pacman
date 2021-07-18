@@ -15,12 +15,16 @@ class Maze:
             for yidx, line in enumerate(file):
                 x = 0
                 for xidx, char in enumerate(line):
-                    if char != "\n" and char != "S":
+                    if char == "0":
                         self.walls.append(
                             Cell(position=Vector2(x, y), wall_type=f"wall_{char}", x_index=xidx, y_index=yidx))
-                    elif char == "0":
+                    elif char == "S":
+                        self.walls.append(
+                            Cell(position=Vector2(x, y), wall_type=f"wall_0", x_index=xidx, y_index=yidx))
+                    elif char != "\n":
                         self.walls.append(
                             Cell(position=Vector2(x, y), wall_type=f"wall_{char}", x_index=xidx, y_index=yidx))
+
                     x += 32
                 y += 32
 
