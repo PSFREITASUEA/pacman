@@ -25,7 +25,9 @@ class Maze:
                                 position=Vector2(x, y),
                                 wall_type=f"wall_{char}",
                                 is_ghost_spawn=False,
-                                is_walkable=True))
+                                is_walkable=True,
+                                x_index=xidx,
+                                y_index=yidx))
                         self.coins.append((Coin(position=Vector2(x, y), x_index=xidx, y_index=yidx)))
                     elif char == "S":
                         line_cell.append(
@@ -33,20 +35,26 @@ class Maze:
                                 position=Vector2(x, y),
                                 wall_type=f"wall_0",
                                 is_ghost_spawn=False,
-                                is_walkable=False))
+                                is_walkable=False,
+                                x_index=xidx,
+                                y_index=yidx))
                     elif char == "P":
                         line_cell.append(
                             Cell(
                                 position=Vector2(x, y),
                                 wall_type=f"wall_{char}",
                                 is_ghost_spawn=False,
-                                is_walkable=False))
+                                is_walkable=False,
+                                x_index=xidx,
+                                y_index=yidx))
                     elif char == "L":
                         cell_to_be_created = Cell(
                             position=Vector2(x, y),
                             wall_type=f"wall_0",
                             is_ghost_spawn=True,
-                            is_walkable=False)
+                            is_walkable=False,
+                            x_index=xidx,
+                            y_index=yidx)
                         line_cell.append(cell_to_be_created)
                         self.ghost_spawns_cells.append(cell_to_be_created)
                     elif char != "\n":
@@ -55,7 +63,9 @@ class Maze:
                                 position=Vector2(x, y),
                                 wall_type=f"wall_{char}",
                                 is_ghost_spawn=False,
-                                is_walkable=False)
+                                is_walkable=False,
+                                x_index=xidx,
+                                y_index=yidx)
                         )
 
                     x += 32
