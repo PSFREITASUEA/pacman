@@ -65,6 +65,7 @@ class PacMan:
     def update(self, cells):
         self.increase_index()
         self.move(cells)
+        self.animate()
 
     def move(self, cells):
         if self.is_moving_right:
