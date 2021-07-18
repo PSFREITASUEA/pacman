@@ -53,17 +53,7 @@ class PacMan:
 
     def update(self, cell):
         self.increase_index()
-        self.move(cell)
         self.animate()
-
-    def move(self, cell):
-        if cell.wall_type != "wall_0":
-            self.position = self.previous_cell.position
-            self.x_index = self.previous_cell.x_index
-            self.y_index = self.previous_cell.y_index
-        else:
-            self.previous_cell = cell
-            self.position = cell.position
 
     def initialize_sprites(self):
         for number_sprite in range(1, 3):
@@ -112,6 +102,3 @@ class PacMan:
             return self.sprites_up[int(self.current_frame_up)]
         else:
             return self.sprites_right[int(self.current_frame_right)]
-
-    def get_current_position(self):
-        return self.position

@@ -15,7 +15,7 @@ class Screen:
         return self.surface.get_height()
 
     def draw(self, sprite, position):
-        self.surface.blit(sprite, (position[0], position[1]))
+        self.surface.blit(sprite, position)
 
     def draw_maze(self, maze: Maze):
         for y_index in range(0, len(maze.cells)):
