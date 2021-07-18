@@ -18,6 +18,8 @@ class PacMan:
         self.sprites_down = []
         self.current_frame_down = 0
         self.initialize_sprites()
+        self.x_index = 1
+        self.y_index = 1
 
     def change_direction_to(self, direction):
         if direction == "LEFT":
@@ -43,17 +45,29 @@ class PacMan:
 
     def increase_index(self):
         if self.is_moving_right:
-            self.x_index += 0.1
+            self.x_index += 0.10
         elif self.is_moving_up:
-            self.y_index -= 0.1
+            self.y_index -= 0.10
         elif self.is_moving_down:
-            self.y_index += 0.1
+            self.y_index += 0.10
         elif self.is_moving_left:
-            self.x_index -= 0.1
+            self.x_index -= 0.10
 
-    def update(self, cell):
+        if self.x_index >= 19:
+            self.x_index = 19
+        elif self.x_index <= 0:
+            self.x_index = 0
+        if self.y_index >= 19:
+            self.y_index = 19
+        elif self.y_index <= 0:
+            self.y_index = 0
+
+    def update(self, cells):
         self.increase_index()
-        self.animate()
+        self.move(cells)
+
+    def move(self, cells):
+        self.current_cell = cells[int(self.y_index)][int(self.x_index)]
 
     def initialize_sprites(self):
         for number_sprite in range(1, 3):
