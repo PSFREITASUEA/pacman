@@ -1,12 +1,14 @@
 from pygame.math import Vector2
 
 from objects.Cell import Cell
+from objects.Coin import Coin
 
 
 class Maze:
     def __init__(self):
         self.walls = []
         self.spawn = 0
+        self.coins = []
         self.load()
 
     def load(self):
@@ -18,9 +20,9 @@ class Maze:
                     if char == "0":
                         self.walls.append(
                             Cell(position=Vector2(x, y), wall_type=f"wall_{char}", x_index=xidx, y_index=yidx))
+                        self.coins.append((Coin(position=Vector2(x, y), x_index=xidx, y_index=yidx)))
                     elif char == "S":
-                        self.walls.append(
-                            Cell(position=Vector2(x, y), wall_type=f"wall_0", x_index=xidx, y_index=yidx))
+                        self.walls.append(Cell(position=Vector2(x, y), wall_type=f"wall_0", x_index=xidx, y_index=yidx))
                     elif char != "\n":
                         self.walls.append(
                             Cell(position=Vector2(x, y), wall_type=f"wall_{char}", x_index=xidx, y_index=yidx))
@@ -38,3 +40,9 @@ class Maze:
         for cell in self.walls:
             if cell.x_index == x_index and cell.y_index == y_index:
                 return cell
+
+    def update(self, x_index, y_index):
+        for coin in self.coins:
+            if coin.x_index == x_index and coin.y_index == y_index:
+                self.coins.remove(coin)
+                break

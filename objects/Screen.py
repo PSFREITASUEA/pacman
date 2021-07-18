@@ -21,5 +21,9 @@ class Screen:
         for wall in maze.walls:
             self.surface.blit(wall.sprite, (wall.position[0], wall.position[1]))
 
+    def draw_coins(self, coins):
+        for coin in coins:
+            self.surface.blit(coin.sprite, (coin.position[0], coin.position[1]))
+
     def draw_background(self):
         self.surface.fill((0, 0, 0))
