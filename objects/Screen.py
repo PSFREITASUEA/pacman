@@ -27,3 +27,7 @@ class Screen:
 
     def draw_background(self):
         self.surface.fill((0, 0, 0))
+
+    def draw_ghosts(self, ghosts):
+        for ghost in ghosts:
+            self.surface.blit(ghost.get_current_sprite(), ghost.get_current_position())

@@ -2,8 +2,11 @@ import pygame
 
 
 class Ghost:
-    def __init__(self, position, difficult, color):
+    def __init__(self, spawn, difficult, color):
         self.color = color
+        self.difficult = difficult
+        self.speed = self.setup_speed_based_on_difficult()
+        self.position = spawn.position
         self.lives = 1
         self.sprites_left = []
         self.current_frame_left = 0
@@ -18,9 +21,6 @@ class Ghost:
         self.is_moving_up = False
         self.is_moving_down = False
         self.initialize_sprites()
-        self.difficult = difficult
-        self.speed = self.setup_speed_based_on_difficult()
-        self.position = self.sprites_right[0].get_rect()
 
     def move(self):
         if self.is_moving_up:

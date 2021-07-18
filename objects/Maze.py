@@ -9,6 +9,7 @@ class Maze:
         self.walls = []
         self.spawn = 0
         self.coins = []
+        self.ghost_spawns_cells = []
         self.load()
 
     def load(self):
@@ -19,13 +20,38 @@ class Maze:
                 for xidx, char in enumerate(line):
                     if char == "0":
                         self.walls.append(
-                            Cell(position=Vector2(x, y), wall_type=f"wall_{char}", x_index=xidx, y_index=yidx))
+                            Cell(
+                                position=Vector2(x, y),
+                                wall_type=f"wall_{char}",
+                                x_index=xidx,
+                                y_index=yidx,
+                                is_ghost_spawn=False))
                         self.coins.append((Coin(position=Vector2(x, y), x_index=xidx, y_index=yidx)))
                     elif char == "S":
-                        self.walls.append(Cell(position=Vector2(x, y), wall_type=f"wall_0", x_index=xidx, y_index=yidx))
+                        self.walls.append(
+                            Cell(
+                                position=Vector2(x, y),
+                                wall_type=f"wall_0",
+                                x_index=xidx,
+                                y_index=yidx,
+                                is_ghost_spawn=False))
+                    elif char == "L":
+                        cell_to_be_created = Cell(
+                            position=Vector2(x, y),
+                            wall_type=f"wall_0",
+                            x_index=xidx,
+                            y_index=yidx,
+                            is_ghost_spawn=True)
+                        self.walls.append(cell_to_be_created)
+                        self.ghost_spawns_cells.append(cell_to_be_created)
                     elif char != "\n":
                         self.walls.append(
-                            Cell(position=Vector2(x, y), wall_type=f"wall_{char}", x_index=xidx, y_index=yidx))
+                            Cell(
+                                position=Vector2(x, y),
+                                wall_type=f"wall_{char}",
+                                x_index=xidx,
+                                y_index=yidx,
+                                is_ghost_spawn=False))
 
                     x += 32
                 y += 32
