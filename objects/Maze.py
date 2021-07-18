@@ -34,6 +34,13 @@ class Maze:
                                 wall_type=f"wall_0",
                                 is_ghost_spawn=False,
                                 is_walkable=False))
+                    elif char == "P":
+                        line_cell.append(
+                            Cell(
+                                position=Vector2(x, y),
+                                wall_type=f"wall_{char}",
+                                is_ghost_spawn=False,
+                                is_walkable=False))
                     elif char == "L":
                         cell_to_be_created = Cell(
                             position=Vector2(x, y),
