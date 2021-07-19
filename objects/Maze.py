@@ -26,6 +26,7 @@ class Maze:
                                 wall_type=f"wall_{char}",
                                 is_ghost_spawn=False,
                                 is_walkable=True,
+                                is_walkable_for_ghosts=True,
                                 x_index=xidx,
                                 y_index=yidx))
                         self.coins.append((Coin(position=Vector2(x, y), x_index=xidx, y_index=yidx)))
@@ -36,6 +37,7 @@ class Maze:
                                 wall_type=f"wall_0",
                                 is_ghost_spawn=False,
                                 is_walkable=False,
+                                is_walkable_for_ghosts=False,
                                 x_index=xidx,
                                 y_index=yidx))
                     elif char == "P":
@@ -45,6 +47,7 @@ class Maze:
                                 wall_type=f"wall_{char}",
                                 is_ghost_spawn=False,
                                 is_walkable=False,
+                                is_walkable_for_ghosts=True,
                                 x_index=xidx,
                                 y_index=yidx))
                     elif char == "L":
@@ -53,6 +56,7 @@ class Maze:
                             wall_type=f"wall_0",
                             is_ghost_spawn=True,
                             is_walkable=False,
+                            is_walkable_for_ghosts=True,
                             x_index=xidx,
                             y_index=yidx)
                         line_cell.append(cell_to_be_created)
@@ -64,6 +68,7 @@ class Maze:
                                 wall_type=f"wall_{char}",
                                 is_ghost_spawn=False,
                                 is_walkable=False,
+                                is_walkable_for_ghosts=False,
                                 x_index=xidx,
                                 y_index=yidx)
                         )
