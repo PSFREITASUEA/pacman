@@ -2,12 +2,8 @@ import pygame.image
 
 
 class PacMan:
-    def __init__(self, spawn):
-        self.spawn = spawn
-        self.position = spawn.position
-        self.x_index = spawn.x_index
-        self.y_index = spawn.y_index
-        self.previous_cell = spawn
+    def __init__(self, spawn_cell):
+        self.current_cell = spawn_cell
         self.sprite = pygame.image.load("assets/pac_man_right_1.png")
         self.is_moving_right = False
         self.is_moving_left = False
@@ -22,6 +18,8 @@ class PacMan:
         self.sprites_down = []
         self.current_frame_down = 0
         self.initialize_sprites()
+        self.x_index = 1
+        self.y_index = 1
 
     def change_direction_to(self, direction):
         if direction == "LEFT":
@@ -47,27 +45,47 @@ class PacMan:
 
     def increase_index(self):
         if self.is_moving_right:
-            self.x_index += 0.1
+            self.x_index += 0.10
         elif self.is_moving_up:
-            self.y_index -= 0.1
+            self.y_index -= 0.10
         elif self.is_moving_down:
-            self.y_index += 0.1
+            self.y_index += 0.10
         elif self.is_moving_left:
-            self.x_index -= 0.1
+            self.x_index -= 0.10
 
-    def update(self, cell):
+        if self.x_index >= 19:
+            self.x_index = 19
+        elif self.x_index <= 0:
+            self.x_index = 0
+        if self.y_index >= 19:
+            self.y_index = 19
+        elif self.y_index <= 0:
+            self.y_index = 0
+
+    def update(self, cells):
         self.increase_index()
-        self.move(cell)
+        self.move(cells)
         self.animate()
 
-    def move(self, cell):
-        if cell.wall_type != "wall_0":
-            self.position = self.previous_cell.position
-            self.x_index = self.previous_cell.x_index
-            self.y_index = self.previous_cell.y_index
-        else:
-            self.previous_cell = cell
-            self.position = cell.position
+    def move(self, cells):
+        if self.is_moving_right:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+                self.x_index -= 1
+                self.is_moving_right = False
+        elif self.is_moving_left:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+                self.x_index += 1
+                self.is_moving_left = False
+        elif self.is_moving_down:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+                self.y_index -= 1
+                self.is_moving_down = False
+        elif self.is_moving_up:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+                self.y_index += 1
+                self.is_moving_up = False
+
+        self.current_cell = cells[int(self.y_index)][int(self.x_index)]
 
     def initialize_sprites(self):
         for number_sprite in range(1, 3):
@@ -116,6 +134,3 @@ class PacMan:
             return self.sprites_up[int(self.current_frame_up)]
         else:
             return self.sprites_right[int(self.current_frame_right)]
-
-    def get_current_position(self):
-        return self.position

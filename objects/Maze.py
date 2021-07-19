@@ -6,7 +6,7 @@ from objects.Coin import Coin
 
 class Maze:
     def __init__(self):
-        self.walls = []
+        self.cells = []
         self.spawn = 0
         self.coins = []
         self.ghost_spawns_cells = []
@@ -17,58 +17,66 @@ class Maze:
             y = 0
             for yidx, line in enumerate(file):
                 x = 0
+                line_cell = []
                 for xidx, char in enumerate(line):
                     if char == "0":
-                        self.walls.append(
+                        line_cell.append(
                             Cell(
                                 position=Vector2(x, y),
                                 wall_type=f"wall_{char}",
+                                is_ghost_spawn=False,
+                                is_walkable=True,
                                 x_index=xidx,
-                                y_index=yidx,
-                                is_ghost_spawn=False))
+                                y_index=yidx))
                         self.coins.append((Coin(position=Vector2(x, y), x_index=xidx, y_index=yidx)))
                     elif char == "S":
-                        self.walls.append(
+                        line_cell.append(
                             Cell(
                                 position=Vector2(x, y),
                                 wall_type=f"wall_0",
+                                is_ghost_spawn=False,
+                                is_walkable=False,
                                 x_index=xidx,
-                                y_index=yidx,
-                                is_ghost_spawn=False))
+                                y_index=yidx))
+                    elif char == "P":
+                        line_cell.append(
+                            Cell(
+                                position=Vector2(x, y),
+                                wall_type=f"wall_{char}",
+                                is_ghost_spawn=False,
+                                is_walkable=False,
+                                x_index=xidx,
+                                y_index=yidx))
                     elif char == "L":
                         cell_to_be_created = Cell(
                             position=Vector2(x, y),
                             wall_type=f"wall_0",
+                            is_ghost_spawn=True,
+                            is_walkable=False,
                             x_index=xidx,
-                            y_index=yidx,
-                            is_ghost_spawn=True)
-                        self.walls.append(cell_to_be_created)
+                            y_index=yidx)
+                        line_cell.append(cell_to_be_created)
                         self.ghost_spawns_cells.append(cell_to_be_created)
                     elif char != "\n":
-                        self.walls.append(
+                        line_cell.append(
                             Cell(
                                 position=Vector2(x, y),
                                 wall_type=f"wall_{char}",
+                                is_ghost_spawn=False,
+                                is_walkable=False,
                                 x_index=xidx,
-                                y_index=yidx,
-                                is_ghost_spawn=False))
+                                y_index=yidx)
+                        )
 
                     x += 32
+                self.cells.append(line_cell)
                 y += 32
-
-    def get_spawn(self):
-        for cell in self.walls:
-            if cell.wall_type == "wall_0":
-                self.spawn = cell
-                return self.spawn
-
-    def get_cell(self, x_index, y_index):
-        for cell in self.walls:
-            if cell.x_index == x_index and cell.y_index == y_index:
-                return cell
 
     def update(self, x_index, y_index):
         for coin in self.coins:
             if coin.x_index == x_index and coin.y_index == y_index:
                 self.coins.remove(coin)
                 break
+
+    def get_spawn(self):
+        return self.cells[1][1]
