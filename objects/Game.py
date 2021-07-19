@@ -5,11 +5,14 @@ from objects.Ghost import Ghost
 from objects.Maze import Maze
 from objects.PacMan import PacMan
 from objects.Screen import Screen
+from objects.Util import *
 
 
 class Game:
     def __init__(self, screen_width, screen_height, framerate):
         self.screen = Screen(screen_width, screen_height)
+        self.cell_width = 32
+        self.cell_height = 32
         self.is_running = True
         self.maze = Maze()
         self.pac_man = PacMan(self.maze.get_spawn())
@@ -37,30 +40,15 @@ class Game:
             self.screen.draw_background()
             self.screen.draw_maze(self.maze)
             self.pac_man.update(self.maze.cells)
+            self.screen.draw_ghosts(self.ghosts)
             self.screen.draw_coins(self.maze.coins)
             self.screen.draw(self.pac_man.get_current_sprite(), self.pac_man.current_cell.position)
             self.maze.update(int(self.pac_man.x_index), int(self.pac_man.y_index))
-            self.screen.draw_ghosts(self.ghosts)
             pygame.display.flip()
 
     def stop_game(self):
         self.is_running = False
 
     def generate_ghosts(self):
-        color = "red"
         for i in range(0, len(self.maze.ghost_spawns_cells)):
-            if i == 0:
-                color = "cyan"
-            elif i == 1:
-                color = "red"
-            elif i == 2:
-                color = "pink"
-            elif i == 3:
-                color = "orange"
-            ghost_to_be_generated = Ghost(
-                spawn=self.maze.ghost_spawns_cells[i],
-                difficult="EASY",
-                color=color
-            )
-            ghost_to_be_generated.color = color
-            self.ghosts.append(ghost_to_be_generated)
+            self.ghosts.append(Ghost(self, vec(self.maze.ghost_spawns_cells[i].position), i))

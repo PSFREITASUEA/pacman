@@ -1,13 +1,21 @@
 import pygame
-
+from objects.Util import *
 
 class Ghost:
-    def __init__(self, spawn, difficult, color):
-        self.color = color
-        self.difficult = difficult
-        self.speed = self.setup_speed_based_on_difficult()
-        self.position = spawn.position
-        self.lives = 1
+    def __init__(self, app, pos, number):
+        self.app = app
+        self.grid_pos = pos
+        self.starting_pos = [pos.x, pos.y]
+        self.pix_pos = self.get_pix_pos()
+        self.radius = int(self.app.cell_width // 2.3)
+        self.number = number
+        self.colour = self.set_colour()
+        self.direction = vec(0, 0)
+        self.personality = self.set_personality()
+        self.target = None
+        self.targetFocus = self.app.pac_man.current_cell
+        self.speed = self.set_speed()
+
         self.sprites_left = []
         self.current_frame_left = 0
         self.sprites_right = []
@@ -16,91 +24,195 @@ class Ghost:
         self.current_frame_up = 0
         self.sprites_down = []
         self.current_frame_down = 0
-        self.is_moving_left = False
-        self.is_moving_right = False
-        self.is_moving_up = False
-        self.is_moving_down = False
         self.initialize_sprites()
 
-    def move(self):
-        if self.is_moving_up:
-            self.position.y -= self.speed
-        elif self.is_moving_down:
-            self.position.y += self.speed
-        elif self.is_moving_left:
-            self.position.x -= self.speed
-        elif self.is_moving_right:
-            self.position.x += self.speed
+    def update(self):
+        self.target = self.set_target()
+        if self.target != self.grid_pos:
+            self.pix_pos += self.direction * self.speed
+            if self.time_to_move():
+                self.move()
 
-    def change_direction_to(self, direction):
-        if direction == "LEFT":
-            self.is_moving_left = True
-            self.is_moving_right = False
-            self.is_moving_up = False
-            self.is_moving_down = False
-        elif direction == "RIGHT":
-            self.is_moving_left = False
-            self.is_moving_right = True
-            self.is_moving_up = False
-            self.is_moving_down = False
-        elif direction == "UP":
-            self.is_moving_left = False
-            self.is_moving_right = False
-            self.is_moving_up = True
-            self.is_moving_down = False
-        elif direction == "DOWN":
-            self.is_moving_left = False
-            self.is_moving_right = False
-            self.is_moving_up = False
-            self.is_moving_down = True
+        # Setting grid position in reference to pix position
+        self.grid_pos[0] = (self.pix_pos[0] - TOP_BOTTOM_BUFFER +
+                            self.app.cell_width // 2) // self.app.cell_width + 1
+        self.grid_pos[1] = (self.pix_pos[1] - TOP_BOTTOM_BUFFER +
+                            self.app.cell_height // 2) // self.app.cell_height + 1
+        self.animate()
+
+
+    def draw(self):
+        pygame.draw.circle(self.app.screen, self.colour,
+                           (int(self.pix_pos.x), int(self.pix_pos.y)), self.radius)
+
+
+    def set_speed(self):
+        if self.personality in ["speedy", "scared"]:
+            speed = 2
+        else:
+            speed = 1
+        return speed
+
+
+    def set_target(self):
+        if self.personality == "speedy" or self.personality == "slow":
+            return self.targetFocus
+        else:
+            if self.app.player.grid_pos[0] > COLS // 2 and self.app.player.grid_pos[1] > ROWS // 2:
+                return [self.app.player.grid_pos[0], self.app.player.grid_pos[1]]
+            if self.app.player.grid_pos[0] > COLS // 2 and self.app.player.grid_pos[1] < ROWS // 2:
+                return [self.app.player.grid_pos[0], self.app.player.grid_pos[1]]
+            if self.app.player.grid_pos[0] < COLS // 2 and self.app.player.grid_pos[1] > ROWS // 2:
+                return vec(COLS - 2, 1)
+            else:
+                return vec(COLS - 2, ROWS - 2)
+
+
+    def time_to_move(self):
+        if int(self.pix_pos.x + TOP_BOTTOM_BUFFER // 2) % self.app.cell_width == 0:
+            if self.direction == vec(1, 0) or self.direction == vec(-1, 0) or self.direction == vec(0, 0):
+                return True
+        if int(self.pix_pos.y + TOP_BOTTOM_BUFFER // 2) % self.app.cell_height == 0:
+            if self.direction == vec(0, 1) or self.direction == vec(0, -1) or self.direction == vec(0, 0):
+                return True
+        return False
+
+
+    def move(self):
+        if self.personality == "random":
+            self.direction = self.get_random_direction()
+        if self.personality == "slow":
+            self.direction = self.get_path_direction(self.target)
+        if self.personality == "speedy":
+            self.direction = self.get_path_direction(self.target)
+        if self.personality == "scared":
+            self.direction = self.get_path_direction(self.target)
+
+
+    def get_path_direction(self, target):
+        next_cell = self.find_next_cell_in_path(target)
+        xdir = next_cell[0] - self.grid_pos[0]
+        ydir = next_cell[1] - self.grid_pos[1]
+        return vec(xdir, ydir)
+
+
+    def find_next_cell_in_path(self, target):
+        path = self.BFS([int(self.grid_pos.x), int(self.grid_pos.y)], [
+            int(target[0]), int(target[1])])
+        return path[1]
+
+
+    def BFS(self, start, target):
+        grid = [[0 for x in range(28)] for x in range(30)]
+        for cell in self.app.walls:
+            if cell.x < 28 and cell.y < 30:
+                grid[int(cell.y)][int(cell.x)] = 1
+        queue = [start]
+        path = []
+        visited = []
+        while queue:
+            current = queue[0]
+            queue.remove(queue[0])
+            visited.append(current)
+            if current == target:
+                break
+            else:
+                neighbours = [[0, -1], [1, 0], [0, 1], [-1, 0]]
+                for neighbour in neighbours:
+                    if neighbour[0] + current[0] >= 0 and neighbour[0] + current[0] < len(grid[0]):
+                        if neighbour[1] + current[1] >= 0 and neighbour[1] + current[1] < len(grid):
+                            next_cell = [neighbour[0] + current[0], neighbour[1] + current[1]]
+                            if next_cell not in visited:
+                                if grid[next_cell[1]][next_cell[0]] != 1:
+                                    queue.append(next_cell)
+                                    path.append({"Current": current, "Next": next_cell})
+        shortest = [target]
+        while target != start:
+            for step in path:
+                if step["Next"] == target:
+                    target = step["Current"]
+                    shortest.insert(0, step["Current"])
+        return shortest
+
+
+    def get_random_direction(self):
+        while True:
+            number = random.randint(-2, 1)
+            if number == -2:
+                x_dir, y_dir = 1, 0
+            elif number == -1:
+                x_dir, y_dir = 0, 1
+            elif number == 0:
+                x_dir, y_dir = -1, 0
+            else:
+                x_dir, y_dir = 0, -1
+            next_pos = vec(self.grid_pos.x + x_dir, self.grid_pos.y + y_dir)
+            if next_pos not in self.app.walls:
+                break
+        return vec(x_dir, y_dir)
+
+
+    def get_pix_pos(self):
+        return vec((self.grid_pos.x * self.app.cell_width) + TOP_BOTTOM_BUFFER // 2 + self.app.cell_width // 2,
+                   (self.grid_pos.y * self.app.cell_height) + TOP_BOTTOM_BUFFER // 2 +
+                   self.app.cell_height // 2)
+
+
+    def set_colour(self):
+        if self.number == 0:
+            return 'cyan'
+        if self.number == 1:
+            return 'orange'
+        if self.number == 2:
+            return 'pink'
+        if self.number == 3:
+            return 'red'
+
+
+    def set_personality(self):
+        if self.number == 0:
+            return "speedy"
+        elif self.number == 1:
+            return "slow"
+        elif self.number == 2:
+            return "scared"
+        else:
+            return "random"
 
     def get_current_sprite(self):
-        if self.is_moving_left:
+        if self.direction == vec(-1,0):
             return self.sprites_left[int(self.current_frame_left)]
-        elif self.is_moving_down:
+        elif self.direction == vec(0,-1):
             return self.sprites_down[int(self.current_frame_down)]
-        elif self.is_moving_right:
+        elif self.direction == vec(0,1):
             return self.sprites_right[int(self.current_frame_right)]
-        elif self.is_moving_up:
+        elif self.direction == vec(0,1):
             return self.sprites_up[int(self.current_frame_up)]
         else:
             return self.sprites_right[int(self.current_frame_right)]
 
-    def get_current_position(self):
-        return self.position.x, self.position.y
-
-    def update(self):
-        self.move()
-        self.animate()
 
     def initialize_sprites(self):
-        self.sprites_left.append(pygame.image.load(f'assets/{self.color}_ghost_left.png'))
-        self.sprites_down.append(pygame.image.load(f'assets/{self.color}_ghost_down.png'))
-        self.sprites_up.append(pygame.image.load(f'assets/{self.color}_ghost_up.png'))
-        self.sprites_right.append(pygame.image.load(f'assets/{self.color}_ghost_right.png'))
+        print(self.starting_pos)
+        self.sprites_left.append(pygame.image.load(f'assets/{self.colour}_ghost_left.png'))
+        self.sprites_down.append(pygame.image.load(f'assets/{self.colour}_ghost_down.png'))
+        self.sprites_up.append(pygame.image.load(f'assets/{self.colour}_ghost_up.png'))
+        self.sprites_right.append(pygame.image.load(f'assets/{self.colour}_ghost_right.png'))
 
     def animate(self):
-        if self.is_moving_left:
+        if self.direction == vec(-1,0):
             self.current_frame_left += 0.10
             if self.current_frame_left >= len(self.sprites_left):
                 self.current_frame_left = 0
-        elif self.is_moving_down:
+        elif  self.direction == vec(0,-1):
             self.current_frame_down += 0.10
             if self.current_frame_down >= len(self.sprites_down):
                 self.current_frame_down = 0
-        elif self.is_moving_right:
+        elif  self.direction == vec(1,0):
             self.current_frame_right += 0.10
             if self.current_frame_right >= len(self.sprites_right):
                 self.current_frame_right = 0
-        elif self.is_moving_up:
+        elif self.direction == vec(0,1):
             self.current_frame_up += 0.10
             if self.current_frame_up >= len(self.sprites_up):
                 self.current_frame_up = 0
-
-    def setup_speed_based_on_difficult(self):
-        if self.difficult == "EASY":
-            return 1
-        elif self.difficult == "MEDIUM":
-            return 2
-        elif self.difficult == "HARD":
-            return 3
