@@ -6,7 +6,7 @@ class Ghost:
         self.color = color
         self.difficult = difficult
         self.speed = self.setup_speed_based_on_difficult()
-        self.position = spawn.position
+        self.current_cell = spawn
         self.lives = 1
         self.sprites_left = []
         self.current_frame_left = 0
@@ -67,7 +67,7 @@ class Ghost:
             return self.sprites_right[int(self.current_frame_right)]
 
     def get_current_position(self):
-        return self.position.x, self.position.y
+        return self.current_cell.position
 
     def update(self):
         self.move()
