@@ -32,4 +32,4 @@ class Screen:
 
     def draw_ghosts(self, ghosts):
         for ghost in ghosts:
-            self.surface.blit(ghost.get_current_sprite(), ghost.get_current_position())
+            self.surface.blit(ghost.get_current_sprite(), ghost.get_pix_pos())
