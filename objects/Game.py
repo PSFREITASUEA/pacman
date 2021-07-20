@@ -40,6 +40,8 @@ class Game:
 
             for ghost in self.ghosts:
                 ghost.update(self.maze.cells, self.pac_man.current_cell)
+                if ghost.current_cell == self.pac_man.current_cell:
+                    self.is_running = False
 
             self.screen.draw_coins(self.maze.coins)
             self.screen.draw(self.pac_man.get_current_sprite(), self.pac_man.current_cell.position)
