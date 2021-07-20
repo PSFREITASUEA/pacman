@@ -37,6 +37,12 @@ class Game:
             self.screen.draw_background()
             self.screen.draw_maze(self.maze)
             self.pac_man.update(self.maze.cells)
+
+            for ghost in self.ghosts:
+                ghost.update(self.maze.cells, self.pac_man.current_cell)
+                if ghost.current_cell == self.pac_man.current_cell:
+                    self.is_running = False
+
             self.screen.draw_coins(self.maze.coins)
             self.screen.draw(self.pac_man.get_current_sprite(), self.pac_man.current_cell.position)
             self.maze.update(int(self.pac_man.x_index), int(self.pac_man.y_index))
@@ -59,7 +65,7 @@ class Game:
                 color = "orange"
             ghost_to_be_generated = Ghost(
                 spawn=self.maze.ghost_spawns_cells[i],
-                difficult="EASY",
+                difficult=i,
                 color=color
             )
             ghost_to_be_generated.color = color

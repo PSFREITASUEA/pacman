@@ -69,19 +69,19 @@ class PacMan:
 
     def move(self, cells):
         if self.is_moving_right:
-            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable_for_pac_man:
                 self.x_index -= 1
                 self.is_moving_right = False
         elif self.is_moving_left:
-            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable_for_pac_man:
                 self.x_index += 1
                 self.is_moving_left = False
         elif self.is_moving_down:
-            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable_for_pac_man:
                 self.y_index -= 1
                 self.is_moving_down = False
         elif self.is_moving_up:
-            if not cells[int(self.y_index)][int(self.x_index)].is_walkable:
+            if not cells[int(self.y_index)][int(self.x_index)].is_walkable_for_pac_man:
                 self.y_index += 1
                 self.is_moving_up = False
 
