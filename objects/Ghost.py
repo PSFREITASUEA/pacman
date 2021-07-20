@@ -1,5 +1,7 @@
 import pygame
+from objects.Game import *
 from objects.Util import *
+
 
 class Ghost:
     def __init__(self, app, pos, number):
@@ -27,6 +29,7 @@ class Ghost:
         self.initialize_sprites()
 
     def update(self):
+        print(self.pix_pos)
         self.target = self.set_target()
         if self.target != self.grid_pos:
             self.pix_pos += self.direction * self.speed
@@ -40,12 +43,6 @@ class Ghost:
                             self.app.cell_height // 2) // self.app.cell_height + 1
         self.animate()
 
-
-    def draw(self):
-        pygame.draw.circle(self.app.screen, self.colour,
-                           (int(self.pix_pos.x), int(self.pix_pos.y)), self.radius)
-
-
     def set_speed(self):
         if self.personality in ["speedy", "scared"]:
             speed = 2
@@ -53,20 +50,18 @@ class Ghost:
             speed = 1
         return speed
 
-
     def set_target(self):
         if self.personality == "speedy" or self.personality == "slow":
             return self.targetFocus
         else:
-            if self.app.player.grid_pos[0] > COLS // 2 and self.app.player.grid_pos[1] > ROWS // 2:
-                return [self.app.player.grid_pos[0], self.app.player.grid_pos[1]]
-            if self.app.player.grid_pos[0] > COLS // 2 and self.app.player.grid_pos[1] < ROWS // 2:
-                return [self.app.player.grid_pos[0], self.app.player.grid_pos[1]]
-            if self.app.player.grid_pos[0] < COLS // 2 and self.app.player.grid_pos[1] > ROWS // 2:
+            if self.app.pac_man.x_index > COLS // 2 and self.app.pac_man.y_index > ROWS // 2:
+                return [self.app.pac_man.x_index, self.app.pac_man.y_index]
+            if self.app.pac_man.x_index > COLS // 2 and self.app.pac_man.y_index < ROWS // 2:
+                return [self.app.pac_man.x_index, self.app.pac_man.y_index]
+            if self.app.pac_man.x_index < COLS // 2 and self.app.pac_man.y_index > ROWS // 2:
                 return vec(COLS - 2, 1)
             else:
                 return vec(COLS - 2, ROWS - 2)
-
 
     def time_to_move(self):
         if int(self.pix_pos.x + TOP_BOTTOM_BUFFER // 2) % self.app.cell_width == 0:
@@ -76,7 +71,6 @@ class Ghost:
             if self.direction == vec(0, 1) or self.direction == vec(0, -1) or self.direction == vec(0, 0):
                 return True
         return False
-
 
     def move(self):
         if self.personality == "random":
@@ -88,22 +82,18 @@ class Ghost:
         if self.personality == "scared":
             self.direction = self.get_path_direction(self.target)
 
-
     def get_path_direction(self, target):
         next_cell = self.find_next_cell_in_path(target)
         xdir = next_cell[0] - self.grid_pos[0]
         ydir = next_cell[1] - self.grid_pos[1]
         return vec(xdir, ydir)
 
-
     def find_next_cell_in_path(self, target):
-        path = self.BFS([int(self.grid_pos.x), int(self.grid_pos.y)], [
-            int(target[0]), int(target[1])])
+        path = self.bfs([int(self.grid_pos.x), int(self.grid_pos.y)],[int(target[0]), int(target[1])])
         return path[1]
 
-
-    def BFS(self, start, target):
-        grid = [[0 for x in range(28)] for x in range(30)]
+    def bfs(self, start, target):
+        grid = [[0 for x in range(28)] for y in range(30)]
         for cell in self.app.walls:
             if cell.x < 28 and cell.y < 30:
                 grid[int(cell.y)][int(cell.x)] = 1
@@ -134,7 +124,6 @@ class Ghost:
                     shortest.insert(0, step["Current"])
         return shortest
 
-
     def get_random_direction(self):
         while True:
             number = random.randint(-2, 1)
@@ -147,16 +136,15 @@ class Ghost:
             else:
                 x_dir, y_dir = 0, -1
             next_pos = vec(self.grid_pos.x + x_dir, self.grid_pos.y + y_dir)
+            print(next_pos)
             if next_pos not in self.app.walls:
                 break
         return vec(x_dir, y_dir)
-
 
     def get_pix_pos(self):
         return vec((self.grid_pos.x * self.app.cell_width) + TOP_BOTTOM_BUFFER // 2 + self.app.cell_width // 2,
                    (self.grid_pos.y * self.app.cell_height) + TOP_BOTTOM_BUFFER // 2 +
                    self.app.cell_height // 2)
-
 
     def set_colour(self):
         if self.number == 0:
@@ -167,7 +155,6 @@ class Ghost:
             return 'pink'
         if self.number == 3:
             return 'red'
-
 
     def set_personality(self):
         if self.number == 0:
@@ -180,17 +167,16 @@ class Ghost:
             return "random"
 
     def get_current_sprite(self):
-        if self.direction == vec(-1,0):
+        if self.direction == vec(-1, 0):
             return self.sprites_left[int(self.current_frame_left)]
-        elif self.direction == vec(0,-1):
+        elif self.direction == vec(0, -1):
             return self.sprites_down[int(self.current_frame_down)]
-        elif self.direction == vec(0,1):
+        elif self.direction == vec(0, 1):
             return self.sprites_right[int(self.current_frame_right)]
-        elif self.direction == vec(0,1):
+        elif self.direction == vec(0, 1):
             return self.sprites_up[int(self.current_frame_up)]
         else:
             return self.sprites_right[int(self.current_frame_right)]
-
 
     def initialize_sprites(self):
         print(self.starting_pos)
@@ -200,19 +186,19 @@ class Ghost:
         self.sprites_right.append(pygame.image.load(f'assets/{self.colour}_ghost_right.png'))
 
     def animate(self):
-        if self.direction == vec(-1,0):
+        if self.direction == vec(-1, 0):
             self.current_frame_left += 0.10
             if self.current_frame_left >= len(self.sprites_left):
                 self.current_frame_left = 0
-        elif  self.direction == vec(0,-1):
+        elif self.direction == vec(0, -1):
             self.current_frame_down += 0.10
             if self.current_frame_down >= len(self.sprites_down):
                 self.current_frame_down = 0
-        elif  self.direction == vec(1,0):
+        elif self.direction == vec(1, 0):
             self.current_frame_right += 0.10
             if self.current_frame_right >= len(self.sprites_right):
                 self.current_frame_right = 0
-        elif self.direction == vec(0,1):
+        elif self.direction == vec(0, 1):
             self.current_frame_up += 0.10
             if self.current_frame_up >= len(self.sprites_up):
                 self.current_frame_up = 0

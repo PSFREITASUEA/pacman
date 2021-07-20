@@ -11,8 +11,8 @@ from objects.Util import *
 class Game:
     def __init__(self, screen_width, screen_height, framerate):
         self.screen = Screen(screen_width, screen_height)
-        self.cell_width = 32
-        self.cell_height = 32
+        self.cell_width = MAZE_WIDTH//COLS
+        self.cell_height = MAZE_HEIGHT//ROWS
         self.is_running = True
         self.maze = Maze()
         self.pac_man = PacMan(self.maze.get_spawn())
@@ -37,6 +37,10 @@ class Game:
                     elif event.key == K_DOWN:
                         self.pac_man.change_direction_to("DOWN")
 
+            for ghost in self.ghosts:
+                ghost.update()
+
+
             self.screen.draw_background()
             self.screen.draw_maze(self.maze)
             self.pac_man.update(self.maze.cells)
@@ -44,6 +48,7 @@ class Game:
             self.screen.draw_coins(self.maze.coins)
             self.screen.draw(self.pac_man.get_current_sprite(), self.pac_man.current_cell.position)
             self.maze.update(int(self.pac_man.x_index), int(self.pac_man.y_index))
+
             pygame.display.flip()
 
     def stop_game(self):
