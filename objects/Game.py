@@ -54,7 +54,7 @@ class Game:
 
     def generate_ghosts(self):
         color = "red"
-        for i in range(0, 1):
+        for i in range(0, len(self.maze.ghost_spawns_cells)):
             if i == 0:
                 color = "cyan"
             elif i == 1:
@@ -65,7 +65,7 @@ class Game:
                 color = "orange"
             ghost_to_be_generated = Ghost(
                 spawn=self.maze.ghost_spawns_cells[i],
-                difficult="EASY",
+                difficult=i,
                 color=color
             )
             ghost_to_be_generated.color = color

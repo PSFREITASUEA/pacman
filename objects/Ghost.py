@@ -4,6 +4,7 @@ import pygame
 class Ghost:
     def __init__(self, spawn, difficult, color):
         self.color = color
+        self.difficult = difficult
         self.current_cell = spawn
         self.sprites_left = []
         self.current_frame_left = 0
@@ -18,7 +19,7 @@ class Ghost:
         self.is_moving_up = False
         self.is_moving_down = False
         self.initialize_sprites()
-        self.time_to_move = 0.0
+        self.time_to_move = self.generate_times()
 
     def get_current_sprite(self):
         return self.sprites_right[int(self.current_frame_right)]
@@ -93,3 +94,15 @@ class Ghost:
             shortest_cell_index_position = shortest[1]
         next_cell = walls[shortest_cell_index_position[1]][shortest_cell_index_position[0]]
         return next_cell
+
+    def generate_times(self):
+        if self.difficult == 0:
+            return - 50
+        elif self.difficult == 1:
+            return - 30
+        elif self.difficult == 2:
+            return - 10
+        elif self.difficult == 3:
+            return 1
+        else:
+            return 50
