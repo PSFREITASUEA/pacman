@@ -18,6 +18,7 @@ class Ghost:
         self.is_moving_up = False
         self.is_moving_down = False
         self.initialize_sprites()
+        self.time_to_move = 0.0
 
     def get_current_sprite(self):
         return self.sprites_right[int(self.current_frame_right)]
@@ -26,7 +27,11 @@ class Ghost:
         return self.current_cell.position
 
     def update(self, walls, player_cell):
-        self.move(walls, player_cell)
+        if int(self.time_to_move) == 1:
+            self.move(walls, player_cell)
+            self.time_to_move = 0.0
+        else:
+            self.time_to_move += 0.10
 
     def initialize_sprites(self):
         self.sprites_left.append(pygame.image.load(f'assets/{self.color}_ghost_left.png'))
@@ -82,6 +87,9 @@ class Ghost:
                     target = step["Current"]
                     shortest.insert(0, step["Current"])
 
-        shortest_cell_index_position = shortest[1]
-        next_cell = walls[shortest_cell_index_position[0]][shortest_cell_index_position[1]]
+        if len(shortest) == 1:
+            shortest_cell_index_position = shortest[0]
+        else:
+            shortest_cell_index_position = shortest[1]
+        next_cell = walls[shortest_cell_index_position[1]][shortest_cell_index_position[0]]
         return next_cell
